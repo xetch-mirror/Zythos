@@ -1,6 +1,7 @@
 #ifndef FAT32_H
 #define FAT32_H
 
+#include <stdint.h>
 #include "types.h"
 
 /* Boot Sector структура FAT32 (упрощённая) */
