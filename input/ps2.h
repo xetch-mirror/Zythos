@@ -1,6 +1,3 @@
-// Copyright (c) 2026 Xetch (https://github.com/xetch-mirror)
-// This software is released under the GNU General Public License v2.0. See LICENSE file for details.
-// This header needs to maintain in any file it is present in, as per the GPL license terms.
 #ifndef PS2_H
 #define PS2_H
 
