@@ -9,7 +9,7 @@
 
 #include <stdint.h>
 
-// Public Domain / CC0 8x8 ASCII Font Array (32-127)
+// font array!
 static const uint8_t font8x8_basic[128][8] = {
     {0}, {0}, {0}, {0}, {0}, {0}, {0}, {0}, {0}, {0}, {0}, {0}, {0}, {0}, {0}, {0},
     {0}, {0}, {0}, {0}, {0}, {0}, {0}, {0}, {0}, {0}, {0}, {0}, {0}, {0}, {0}, {0},
