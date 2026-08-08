@@ -1,0 +1,6 @@
+[submodule "usr/usr/zlibc"]
+	path = usr/usr/zlibc
+	url = https://github.com/xetch-mirror/zlibc.git
+[submodule "usr/usr/BCC"]
+	path = usr/usr/BCC
+	url = https://github.com/xetch-mirror/BCC.git
