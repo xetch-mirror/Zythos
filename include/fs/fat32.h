@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include "types.h"
+#include "media.h"
 
 /* Упрощённая структура загрузочного сектора (BPB) FAT32 */
 typedef struct {
@@ -28,7 +29,9 @@ typedef struct {
     uint32_t root_cluster;       /* Смещение 44 */
 } __attribute__((packed)) fat32_bootsector_t;
 
-/* Заглушки функций */
+/* Устанавливает устройство, с которым будет работать fat32_mount() */
+void fat32_set_device(media_device_t *dev);
+
 int fat32_mount(void);
 int fat32_read_file(const char *path, void *buf, uint32_t max_len);
 
