@@ -12,6 +12,8 @@
 #define STDIN_FILENO  0
 #define STDOUT_FILENO 1
 
+#define __NR_exec 3   /* must match SYS_EXEC in include/linux/syscall.h */
+
 static void print(const char *str)
 {
     size_t len = 0;
@@ -54,6 +56,21 @@ static int parse_args(char *line, char **args)
     }
     args[count] = NULL;
     return count;
+}
+
+/* Приглашает ядро выполнить SYS_EXEC: читает ELF-файл по path,
+   загружает через elf_load() и передаёт управление на entry point.
+   Возвращает управление в шелл только при ошибке (return != 0). */
+static long sys_exec_call(const char *path)
+{
+    long ret;
+    __asm__ volatile (
+        "int $0x80"
+        : "=a"(ret)
+        : "a"(__NR_exec), "b"(path)
+        : "memory"
+    );
+    return ret;
 }
 
 /* ---- Хранилище export-переменных: без malloc, фиксированный пул ---- */
@@ -149,11 +166,25 @@ int main(int argc, char **argv, char **envp)
         else if (streq(args[0], "env")) {
             env_print_all();
         }
+        else if (streq(args[0], "elf")) {
+            if (arg_count < 2) {
+                print("elf: usage: elf <path>\n");
+            } else {
+                long ret = sys_exec_call(args[1]);
+                if (ret != 0) {
+                    print("elf: failed to load ");
+                    print(args[1]);
+                    print("\n");
+                }
+                /* on success, control has already jumped to the
+                   loaded binary's entry point and this line won't run */
+            }
+        }
         else if (streq(args[0], "exit")) {
             break;
         }
         else {
-            print("shell: command not found: ");
+            print("zsh: command not found: ");
             print(args[0]);
             print("\n");
         }
