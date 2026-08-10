@@ -359,7 +359,10 @@ section .data
 
 section .data
     global stage2_location
-    stage2_location:        times 30 db 0
+    stage2_location:
+                            dd 1
+                            db 15
+                            times 25 db 0
 
 section .bss
     buffer:                 resb 512

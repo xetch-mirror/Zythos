@@ -1,7 +1,5 @@
 bits 16
 
-section .text
-
 ; ------------------------------------------------------
 ; Читает сектора с диска в реальном режиме (BIOS int 13h)
 ; Параметры:
@@ -12,24 +10,27 @@ section .text
 ; ------------------------------------------------------
 global stage2_disk_read
 stage2_disk_read:
-    pusha
+    mov [kernel_dap.lba], ax
+    mov [kernel_dap.count], cx
+    mov [kernel_dap.offset], bx
+    mov [kernel_dap.segment], es
 
-    mov ah, 0x02          ; функция BIOS: чтение секторов
-    ; TODO: обычный CHS-режим; предполагается диск без LBA-расширений.
-    ; Если нужны расширения (int 13h AH=42h), сюда добавить проверку,
-    ; аналогично stage1.asm (have_extensions)
-
-    mov ch, 0              ; цилиндр 0 (упрощённо, доработать под реальный диск)
-    mov cl, 2               ; стартовый сектор (упрощённо)
-    mov dh, 0               ; головка 0
-
+    mov si, kernel_dap
+    mov ah, 0x42
     int 0x13
     jc .fail
-
-    popa
     ret
 
 .fail:
-    ; TODO: обработка ошибки чтения — пока просто зависание
     cli
+.halt:
     hlt
+    jmp .halt
+
+kernel_dap:
+    db 0x10
+    db 0
+    .count:   dw 0
+    .offset:  dw 0
+    .segment: dw 0
+    .lba:     dq 0

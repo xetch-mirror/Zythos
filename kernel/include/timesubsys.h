@@ -9,6 +9,7 @@ typedef struct {
 // pre-declared common kernel subsystems
 #define DEFINE_SUBSYS(name, tag_str) static const ksubsys_t name = { tag_str }
 
+DEFINE_SUBSYS(LOG_BASE,  "base");
 DEFINE_SUBSYS(LOG_SERIO, "serio");
 DEFINE_SUBSYS(LOG_INPUT, "input");
 DEFINE_SUBSYS(LOG_RTC,   "rtc_cmos");

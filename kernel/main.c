@@ -2,8 +2,8 @@
 #include <linux/kernel.h>
 
 #include "serial.h"
-#include "ksubsys.h"
-#include "memory.h"
+#include "timesubsys.h"
+#include "memory/memory.h"
 
 /* Вывод лога с тегом подсистемы и уровнем важности: [tag] LEVEL message */
 static void klog(ksubsys_t sys, const char *level, const char *msg)

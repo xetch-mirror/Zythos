@@ -1,23 +1,45 @@
-ENTRY(_start)
+OUTPUT_FORMAT(elf32-i386)
+OUTPUT_ARCH(i386)
+ENTRY(main)
+
+KERNEL_LOAD_ADDR = 0x100000;
 
 SECTIONS
 {
-    . = 0x100000;   /* совпадает с KERNEL_FINAL_ADDR в stage2.asm */
+    . = KERNEL_LOAD_ADDR;
+    __kernel_start = .;
 
-    .text : {
-        *(.text)
+    .text ALIGN(0x1000) : {
+        __text_start = .;
+        *(.text .text.*)
+        __text_end = .;
     }
 
-    .rodata : {
-        *(.rodata)
+    .rodata ALIGN(0x1000) : {
+        __rodata_start = .;
+        *(.rodata .rodata.*)
+        __rodata_end = .;
     }
 
-    .data : {
-        *(.data)
+    .data ALIGN(0x1000) : {
+        __data_start = .;
+        *(.data .data.*)
+        __data_end = .;
     }
 
-    .bss : {
+    .bss ALIGN(0x1000) (NOLOAD) : {
+        __bss_start = .;
         *(COMMON)
-        *(.bss)
+        *(.bss .bss.*)
+        __bss_end = .;
+    }
+
+    . = ALIGN(0x1000);
+    __kernel_end = .;
+
+    /DISCARD/ : {
+        *(.comment)
+        *(.eh_frame)
+        *(.note .note.*)
     }
 }

@@ -1,13 +1,16 @@
 bits 16
 
-%include "gdt.asm"
+org 0x500
 
-section .entry
     global stage2_entry
-    extern stage2_disk_read
 
 KERNEL_STAGING_ADDR  equ 0x10000    ; временный адрес в реальном режиме (ниже 1MB)
 KERNEL_FINAL_ADDR    equ 0x100000   ; финальный адрес ядра после защищённого режима
+KERNEL_LBA           equ 16
+
+%ifndef KERNEL_SECTORS
+    %define KERNEL_SECTORS 16
+%endif
 
 stage2_entry:
     cli
@@ -23,7 +26,9 @@ stage2_entry:
     mov ax, KERNEL_STAGING_ADDR >> 4
     mov es, ax
     mov bx, 0
-    call stage2_disk_read     ; TODO: параметры LBA/count нужно передать реально
+    mov ax, KERNEL_LBA
+    mov cx, KERNEL_SECTORS
+    call stage2_disk_read
 
     lgdt [gdt_descriptor]
 
@@ -79,7 +84,6 @@ wait_kbd_output_full:
 
 
 bits 32
-section .text
 
 protected_mode_entry:
     mov ax, DATA_SEG
@@ -87,3 +91,21 @@ protected_mode_entry:
     mov es, ax
     mov fs, ax
     mov gs, ax
+
+    cld
+    mov esi, KERNEL_STAGING_ADDR
+    mov edi, KERNEL_FINAL_ADDR
+    mov ecx, (KERNEL_SECTORS * 512) / 4
+    rep movsd
+
+    mov esp, 0x90000
+    call KERNEL_FINAL_ADDR
+
+.halt:
+    cli
+    hlt
+    jmp .halt
+
+bits 16
+%include "gdt.asm"
+%include "disk.asm"

@@ -4,3 +4,6 @@
 [submodule "usr/usr/BCC"]
 	path = usr/usr/BCC
 	url = https://github.com/xetch-mirror/BCC.git
+[submodule "usr/usr/coreutils"]
+	path = usr/usr/coreutils
+	url = https://github.com/xetch-mirror/coreutils

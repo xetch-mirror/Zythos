@@ -1,5 +1,4 @@
 #include "mm_private.h"
-#include "memory.h"
 #include <stddef.h>
 
 size_t mm_align_size(size_t size)

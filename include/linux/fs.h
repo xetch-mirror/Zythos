@@ -146,16 +146,36 @@ struct buffer_head {
         struct buffer_head * b_reqnext;                /* request queue */
 };
 
+#if __has_include(<linux/pipe_fs_i.h>)
 #include <linux/pipe_fs_i.h>
+#endif
+#if __has_include(<linux/minix_fs_i.h>)
 #include <linux/minix_fs_i.h>
+#endif
+#if __has_include(<linux/ext_fs_i.h>)
 #include <linux/ext_fs_i.h>
+#endif
+#if __has_include(<linux/ext2_fs_i.h>)
 #include <linux/ext2_fs_i.h>
+#endif
+#if __has_include(<linux/hpfs_fs_i.h>)
 #include <linux/hpfs_fs_i.h>
+#endif
+#if __has_include(<linux/msdos_fs_i.h>)
 #include <linux/msdos_fs_i.h>
+#endif
+#if __has_include(<linux/iso_fs_i.h>)
 #include <linux/iso_fs_i.h>
+#endif
+#if __has_include(<linux/nfs_fs_i.h>)
 #include <linux/nfs_fs_i.h>
+#endif
+#if __has_include(<linux/xia_fs_i.h>)
 #include <linux/xia_fs_i.h>
+#endif
+#if __has_include(<linux/sysv_fs_i.h>)
 #include <linux/sysv_fs_i.h>
+#endif
 
 struct inode {
         dev_t                i_dev;
@@ -190,6 +210,7 @@ struct inode {
         unsigned char i_seek;
         unsigned char i_update;
         union {
+#if __has_include(<linux/pipe_fs_i.h>)
                 struct pipe_inode_info pipe_i;
                 struct minix_inode_info minix_i;
                 struct ext_inode_info ext_i;
@@ -200,6 +221,7 @@ struct inode {
                 struct nfs_inode_info nfs_i;
                 struct xiafs_inode_info xiafs_i;
                 struct sysv_inode_info sysv_i;
+#endif
                 void * generic_ip;
         } u;
 };
@@ -227,6 +249,7 @@ struct file_lock {
         off_t fl_end;
 };
 
+#if __has_include(<linux/minix_fs_sb.h>)
 #include <linux/minix_fs_sb.h>
 #include <linux/ext_fs_sb.h>
 #include <linux/ext2_fs_sb.h>
@@ -236,6 +259,7 @@ struct file_lock {
 #include <linux/nfs_fs_sb.h>
 #include <linux/xia_fs_sb.h>
 #include <linux/sysv_fs_sb.h>
+#endif
 
 struct super_block {
         dev_t s_dev;
@@ -252,6 +276,7 @@ struct super_block {
         struct inode * s_mounted;
         struct wait_queue * s_wait;
         union {
+#if __has_include(<linux/minix_fs_sb.h>)
                 struct minix_sb_info minix_sb;
                 struct ext_sb_info ext_sb;
                 struct ext2_sb_info ext2_sb;
@@ -261,6 +286,7 @@ struct super_block {
                 struct nfs_sb_info nfs_sb;
                 struct xiafs_sb_info xiafs_sb;
                 struct sysv_sb_info sysv_sb;
+#endif
                 void *generic_sbp;
         } u;
 };

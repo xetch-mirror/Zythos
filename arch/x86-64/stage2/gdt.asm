@@ -1,7 +1,5 @@
 bits 16
 
-section .rodata
-
 align 8
 gdt_start:
     ; нулевой дескриптор (обязателен)
