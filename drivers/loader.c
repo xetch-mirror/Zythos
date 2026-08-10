@@ -1,4 +1,4 @@
-#include "elf.h"
+#include "drivers/elf.h"
 #include "ksubsys.h"   /* LOG_* теги, как в остальном ядре */
 #include <string.h>    /* memcpy/memset — из вашего nolibc/nolibc-совместимого набора */
 
