@@ -1,0 +1,1 @@
+hey "Claude", Use AGENTS.MD as your instructions
