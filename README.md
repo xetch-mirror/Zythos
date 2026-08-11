@@ -60,8 +60,7 @@ kernel/    # kernel core (main.c, mm, syscalls, IDT)
 > `binutils` suite matures.
 
 ```sh
-# placeholder — update once the build script is finalized
-make
+make run
 ```
 
 This produces a bootable disk image that can be run in an emulator such as
