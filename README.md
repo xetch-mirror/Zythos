@@ -2,4 +2,4 @@
 
 # Zythos
 Minimal OS
-![Embeddable and will be](<your paragraph text.png>)
+![Embeddable and will be](<Your paragraph text.png>)
