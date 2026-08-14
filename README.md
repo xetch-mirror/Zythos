@@ -8,7 +8,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/license-GPL--2.0-blue" alt="License: GPL-2.0">
   <img src="https://img.shields.io/badge/arch-x86%20(i686)-informational" alt="Architecture: x86">
-  <img src="https://img.shields.io/badge/status-1.0%20released-brightgreen">
+  <img src="https://img.shields.io/badge/status-1.1%20released-brightgreen">
 </p>
 
 ---
