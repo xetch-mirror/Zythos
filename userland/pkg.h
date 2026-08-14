@@ -25,4 +25,6 @@ int pkg_remove(const char *name);
 /* fills out[] with up to max installed entries, returns count */
 int pkg_list(pkg_entry_t *out, int max);
 
+int pkg_update(const char *name, const char *new_src_path);
+
 #endif
