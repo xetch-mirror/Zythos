@@ -65,6 +65,21 @@ static int db_save(pkg_entry_t *entries, int count)
     return 0;
 }
 
+/* копирует всё содержимое src в dst; возвращает общее число байт,
+   или -1 при ошибке чтения/записи (общий код для install/update) */
+static int copy_file(vfs_file_t *src, vfs_file_t *dst, uint32_t *out_total)
+{
+    uint8_t buf[512];
+    uint32_t total = 0;
+    int n;
+    while ((n = vfs_read(src, buf, sizeof(buf))) > 0) {
+        if (vfs_write(dst, buf, n) != n) return -1;
+        total += n;
+    }
+    *out_total = total;
+    return 0;
+}
+
 int pkg_install(const char *src_path, const char *name)
 {
     if (str_len(name) >= PKG_NAME_MAX) return -1;
@@ -81,13 +96,8 @@ int pkg_install(const char *src_path, const char *name)
     vfs_file_t dst;
     if (vfs_open(dst_path, &dst) != 0) return -1; /* TODO: needs create-on-open */
 
-    uint8_t buf[512];
     uint32_t total = 0;
-    int n;
-    while ((n = vfs_read(&src, buf, sizeof(buf))) > 0) {
-        if (vfs_write(&dst, buf, n) != n) return -1;
-        total += n;
-    }
+    if (copy_file(&src, &dst, &total) != 0) return -1;
 
     pkg_entry_t entries[PKG_MAX_ENTRIES];
     int count = db_load(entries, PKG_MAX_ENTRIES);
@@ -112,6 +122,35 @@ int pkg_install(const char *src_path, const char *name)
     if (db_save(entries, count) != 0) return -1;
 
     register_elf_command(name, dst_path);
+    return 0;
+}
+
+int pkg_update(const char *name, const char *new_src_path)
+{
+    pkg_entry_t entries[PKG_MAX_ENTRIES];
+    int count = db_load(entries, PKG_MAX_ENTRIES);
+
+    int idx = -1;
+    for (int i = 0; i < count; i++) {
+        if (str_eq(entries[i].name, name)) { idx = i; break; }
+    }
+    if (idx < 0) return -1; /* not installed — use pkg install instead */
+
+    vfs_file_t src;
+    if (vfs_open(new_src_path, &src) != 0) return -1;
+
+    vfs_file_t dst;
+    if (vfs_open(entries[idx].path, &dst) != 0) return -1; /* TODO: same
+        create-on-open gap as pkg_install — overwriting needs vfs_open
+        to support truncate, not just create */
+
+    uint32_t total = 0;
+    if (copy_file(&src, &dst, &total) != 0) return -1;
+
+    entries[idx].size = total;
+    if (db_save(entries, count) != 0) return -1;
+
+    register_elf_command(entries[idx].name, entries[idx].path);
     return 0;
 }
 
