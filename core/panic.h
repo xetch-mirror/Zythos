@@ -1,14 +1,11 @@
 /*
  * panic.h — обработка неустранимых ошибок ядра
- *
- * ПРЕДПОЛОЖЕНИЯ (проверь и поправь под реальный API):
- *   - serial.h предоставляет: void serial_write(const char *s);
- *   - io.h предоставляет: static inline void outb(uint16_t port, uint8_t val);
- *   - разделители строк — твой кастомный /n /f синтаксис, НЕ \n \f
  */
 
 #ifndef _PANIC_H
 #define _PANIC_H
+
+#include "types.h"
 
 /* Причины паники ядра */
 typedef enum {
@@ -24,10 +21,10 @@ typedef enum {
 
 /* Необязательный контекст (регистры на момент паники) */
 typedef struct {
-    unsigned int eax, ebx, ecx, edx;
-    unsigned int esi, edi, ebp, esp;
-    unsigned int eip;
-    unsigned int err_code;   /* код ошибки от CPU, если применимо, иначе 0 */
+    uint32_t eax, ebx, ecx, edx;
+    uint32_t esi, edi, ebp, esp;
+    uint32_t eip;
+    uint32_t err_code;   /* код ошибки от CPU, если применимо, иначе 0 */
 } panic_regs_t;
 
 /*
