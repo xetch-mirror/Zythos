@@ -6,7 +6,7 @@ void *kmalloc(uint32_t size);
 void kfree(void *ptr);
 void *krealloc(void *ptr, uint32_t new_size);
 
-#define HEAP_CAPACITY (64u * 1024u)
+#define HEAP_CAPACITY (256u * 1024u)
 #define MIN_SPLIT_SIZE (sizeof(block_t) + 16u)
 
 static unsigned char g_heap[HEAP_CAPACITY];
@@ -98,10 +98,10 @@ void kfree(void *ptr)
 /*
  * krealloc: grow/shrink an existing allocation.
  *
- * - ptr == 0            -> behaves like kmalloc(new_size)
- * - new_size == 0        -> behaves like kfree(ptr), returns 0
- * - shrinking            -> in-place, splits off the remainder as a free block
- *                           if there's enough room to make a useful split
+ * - ptr == 0              -> behaves like kmalloc(new_size)
+ * - new_size == 0         -> behaves like kfree(ptr), returns 0
+ * - shrinking             -> in-place, splits off the remainder as a free block
+ *                            if there's enough room to make a useful split
  * - growing, next block
  *   is free and big enough -> absorbs the next block in place (no copy)
  * - otherwise             -> allocate new, copy min(old,new) bytes, free old
