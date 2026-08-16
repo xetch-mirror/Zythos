@@ -6,6 +6,7 @@
 #include "tcp.h"
 #include "network.h"
 #include "sys_io.h"
+#include <stdint.h>
 
 #define TCP_FLAG_SYN 0x02
 #define TCP_FLAG_ACK 0x10
