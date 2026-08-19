@@ -32,14 +32,15 @@ powerpc / powerpc64 support is planned as a future architecture target.
 - **BCC** — a minimal, purpose-built C compiler/interpreter (inspired by `c4`)
 - **Own toolchain** — an in-progress `binutils` suite: a freestanding
   assembler with a custom object format, and a linker based on `mold`
-- **libc** — a custom C library with multi-arch raw syscall wrappers
+- **zlibc** — a custom C library with multi-arch raw syscall wrappers
 - **Userland** — a non-Unix shell (`zsh`), a minimal `nolibc`-based shell,
   and coreutils (including `ls`, built directly against FAT32 structures)
 - **ttar** — a "Tiny tar" implementation supporting create/extract of
   `ustar`-format archives
 - **sysfetch** — a `neofetch`-style system info tool
-- Embedded Lua scripting support (in progress)
+- **Lua** - `standard lua` without some tools.
 
+> you probably need the zlibc library to run userland programs.
 ## Repository Layout
 
 ```
