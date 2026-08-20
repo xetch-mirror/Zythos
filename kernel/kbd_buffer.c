@@ -27,4 +27,3 @@ bool kbd_buffer_pop(char *out)
     g_tail = (g_tail + 1) % KBD_BUF_SIZE;
     return true;
 }
-#endif
