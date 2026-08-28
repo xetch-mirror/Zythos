@@ -1,11 +1,13 @@
-/* zsh.c - Minimal userland shell on nolibc */
+/* zsh.c - Minimal userland shell (Standalone, no nolibc) */
 
-#include <nolibc.h>
 #include <linux/signal.h>
 #include <linux/serial.h>
 #include "cmdtable.h"
 #include "register.h"
 #include "pkg.h"
+
+#define NULL ((void *)0)
+typedef unsigned int size_t;
 
 #define MAX_INPUT   256
 #define MAX_ARGS    16
@@ -15,7 +17,34 @@
 #define STDIN_FILENO  0
 #define STDOUT_FILENO 1
 
+#define __NR_read 3
+#define __NR_write 4
 #define __NR_exec 3
+
+/* Low-level inline syscalls replacing nolibc dependencies */
+static long read(int fd, void *buf, size_t count)
+{
+    long ret;
+    __asm__ volatile (
+        "int $0x80"
+        : "=a"(ret)
+        : "a"(__NR_read), "b"(fd), "c"(buf), "d"(count)
+        : "memory"
+    );
+    return ret;
+}
+
+static long write(int fd, const void *buf, size_t count)
+{
+    long ret;
+    __asm__ volatile (
+        "int $0x80"
+        : "=a"(ret)
+        : "a"(__NR_write), "b"(fd), "c"(buf), "d"(count)
+        : "memory"
+    );
+    return ret;
+}
 
 static void print(const char *str)
 {
@@ -79,7 +108,7 @@ static long sys_exec_call(const char *path)
     return ret;
 }
 
-/* ---- env storage (unchanged) ---- */
+/* ---- env storage ---- */
 static char g_env_pool[ENV_POOL_SZ];
 static size_t g_env_pool_used = 0;
 static char *g_env_slots[MAX_ENV];
@@ -164,9 +193,6 @@ static int cmd_pkg(int argc, char **argv)
     return -1;
 }
 REGISTER_CMD("pkg", cmd_pkg)
-
-/* exit is handled specially in the loop (needs to break out of main),
-   so it stays outside the cmdtable rather than returning through fn() */
 
 static void dispatch(char *args0, int arg_count, char **args)
 {
