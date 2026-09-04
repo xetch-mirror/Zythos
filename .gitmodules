@@ -7,3 +7,45 @@
 [submodule "usr/usr/coreutils"]
 	path = usr/usr/coreutils
 	url = https://github.com/xetch-mirror/coreutils
+[submodule "usr/usr/usr/ZCC"]
+	path = usr/usr/usr/ZCC
+	url = https://github.com/xetch-mirror/ZCC.git
+[submodule "usr/usr/usr/sed"]
+	path = usr/usr/usr/sed
+	url = https://github.com/xetch-mirror/sed.git
+[submodule "usr/usr/usr/version"]
+	path = usr/usr/usr/version
+	url = https://github.com/xetch-mirror/version.git
+[submodule "usr/usr/usr/zim"]
+	path = usr/usr/usr/zim
+	url = https://github.com/xetch-mirror/zim.git
+[submodule "usr/usr/usr/Zsub"]
+	path = usr/usr/usr/Zsub
+	url = https://github.com/xetch-mirror/Zsub.git
+[submodule "usr/usr/usr/lua"]
+	path = usr/usr/usr/lua
+	url = https://github.com/xetch-mirror/lua.git
+[submodule "usr/usr/usr/Z-SDL"]
+	path = usr/usr/usr/Z-SDL
+	url = https://github.com/xetch-mirror/Z-SDL.git
+[submodule "usr/usr/usr/Zlispe"]
+	path = usr/usr/usr/Zlispe
+	url = https://github.com/xetch-mirror/Zlispe.git
+[submodule "usr/usr/usr/iniparser"]
+	path = usr/usr/usr/iniparser
+	url = https://github.com/xetch-mirror/iniparser.git
+[submodule "usr/usr/usr/Zemulate"]
+	path = usr/usr/usr/Zemulate
+	url = https://github.com/xetch-mirror/Zemulate.git
+[submodule "usr/usr/usr/JAVA2ME4ZYTHOS"]
+	path = usr/usr/usr/JAVA2ME4ZYTHOS
+	url = https://github.com/xetch-mirror/JAVA2ME4ZYTHOS.git
+[submodule "usr/usr/usr/authutils"]
+	path = usr/usr/usr/authutils
+	url = https://github.com/xetch-mirror/authutils.git
+[submodule "usr/usr/usr/python2-zythos"]
+	path = usr/usr/usr/python2-zythos
+	url = https://github.com/xetch-mirror/python2-zythos.git
+[submodule "usr/usr/usr/sqliteZythos"]
+	path = usr/usr/usr/sqliteZythos
+	url = https://github.com/xetch-mirror/sqliteZythos.git
