@@ -5,7 +5,7 @@
 #include "timesubsys.h"
 #include "memory/memory.h"
 #include "vfs.h"
-#include <linux/elf.h>
+#include "../drivers/elf.h"
 
 #define INIT_PATH   "/init.elf"
 #define INIT_MAXSZ  (1 * 1024 * 1024) /* 1MB — временный лимит, пока нет потоковой загрузки */
@@ -25,11 +25,13 @@ static void klog(ksubsys_t sys, const char *level, const char *msg)
    Возвращает false, если что-то пошло не так — main() уйдёт в idle-цикл как fallback. */
 static bool boot_init(void)
 {
-    vfs_node_t *node = vfs_open(INIT_PATH, VFS_FILE);
-    if (!node) {
+    vfs_file_t file;
+    if (vfs_open(INIT_PATH, &file) != VFS_OK) {
         klog(LOG_BASE, KERN_WARNING, "init.elf not found on vfs/n");
         return false;
     }
+
+    vfs_node_t *node = file.node;
 
     if (node->size == 0 || node->size > INIT_MAXSZ) {
         klog(LOG_BASE, KERN_WARNING, "init.elf size out of range/n");
@@ -43,7 +45,7 @@ static bool boot_init(void)
         return false;
     }
 
-    if (vfs_read(node, buf, node->size) != (ssize_t)node->size) {
+    if (vfs_read(&file, buf, node->size) != (ssize_t)node->size) {
         klog(LOG_BASE, KERN_WARNING, "short read on init.elf/n");
         kfree(buf);
         return false;

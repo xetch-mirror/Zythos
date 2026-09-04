@@ -24,7 +24,7 @@ typedef signed long long   int64_t;
 #endif
 
 /* boolean types */
-#define _Bool              bool;
+typedef int              bool;
 #define true               1
 #define false              0
 

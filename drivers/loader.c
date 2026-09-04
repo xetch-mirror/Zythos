@@ -1,6 +1,34 @@
-#include "drivers/elf.h"
-#include "ksubsys.h"   /* LOG_* теги, как в остальном ядре */
-#include <string.h>    /* memcpy/memset — из вашего nolibc/nolibc-совместимого набора */
+#include "elf.h"
+#include "../kernel/include/timesubsys.h"
+
+static void klog(ksubsys_t sys, const char *format, ...)
+{
+    (void)sys;
+    (void)format;
+}
+
+static void *loader_memcpy(void *destination, const void *source, uint32_t size)
+{
+    uint8_t *dst = (uint8_t *)destination;
+    const uint8_t *src = (const uint8_t *)source;
+
+    for (uint32_t index = 0; index < size; index++) {
+        dst[index] = src[index];
+    }
+
+    return destination;
+}
+
+static void *loader_memset(void *destination, int value, uint32_t size)
+{
+    uint8_t *dst = (uint8_t *)destination;
+
+    for (uint32_t index = 0; index < size; index++) {
+        dst[index] = (uint8_t)value;
+    }
+
+    return destination;
+}
 
 /*
  * Загрузчик ELF32 для Zythos.
@@ -10,12 +38,6 @@
  * Возвращает точку входа (entry point) через out_entry.
  * Возвращает 0 при успехе, -1 при ошибке.
  */
-
-typedef struct {
-    Elf32_Addr entry;
-    Elf32_Addr load_min;   /* нижняя граница занятой памяти */
-    Elf32_Addr load_max;   /* верхняя граница занятой памяти */
-} elf_load_result_t;
 
 static int elf_check_header(const Elf32_Ehdr *eh)
 {
@@ -114,12 +136,12 @@ int elf_load(const void *buf, uint32_t buf_size, elf_load_result_t *out)
         const void *src = (const uint8_t *)buf + ph->p_offset;
 
         /* копируем содержимое файла */
-        memcpy(dst, src, ph->p_filesz);
+        loader_memcpy(dst, src, ph->p_filesz);
 
         /* обнуляем .bss-хвост (memsz - filesz) */
         if (ph->p_memsz > ph->p_filesz) {
-            memset((uint8_t *)dst + ph->p_filesz, 0,
-                   ph->p_memsz - ph->p_filesz);
+                 loader_memset((uint8_t *)dst + ph->p_filesz, 0,
+                         ph->p_memsz - ph->p_filesz);
         }
 
         Elf32_Addr seg_start = ph->p_vaddr;

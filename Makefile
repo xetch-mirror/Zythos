@@ -22,8 +22,13 @@ INIT_ELF := $(ARTIFACT_DIR)/init.elf
 INPUT_ELF := $(ARTIFACT_DIR)/input.elf
 INITRD := $(ARTIFACT_DIR)/initrd.tar.gz
 INITLIB_HEADER := $(BUILD_DIR)/include/initlib.h
+COREUTILS_DIR := usr/usr/coreutils
+COREUTILS_BUILD := $(COREUTILS_DIR)/build
+COREUTILS_SOURCES := $(COREUTILS_DIR)/src/cat.c $(COREUTILS_DIR)/src/grep.c $(COREUTILS_DIR)/src/ls.c
+COREUTILS_OBJECTS := $(patsubst $(COREUTILS_DIR)/src/%.c,$(COREUTILS_BUILD)/src/%.o,$(COREUTILS_SOURCES))
+COREUTILS_LIB := $(COREUTILS_BUILD)/libcoreutils.a
 
-KERNEL_SOURCES := kernel/main.c
+KERNEL_SOURCES := kernel/main.c kernel/vfs.c drivers/loader.c
 MM_SOURCES := mm/blocks.c mm/heap.c
 INIT_SOURCES := init/init.c init/init_proc.c init/initlib.c
 INPUT_SOURCES := input/keyboard.c input/keymap.c
@@ -31,7 +36,7 @@ COMPILE_SOURCES := $(KERNEL_SOURCES) $(MM_SOURCES) $(INIT_SOURCES) $(INPUT_SOURC
 COMPILE_OBJECTS := $(patsubst %.c,$(OBJECT_DIR)/%.o,$(COMPILE_SOURCES))
 HEADER_SOURCES := $(shell find include -type f -name '*.h' -print)
 
-.PHONY: all help headers compile userspace bcc zlibc coreutils boot fs run clean check-tools check-fs-tools
+.PHONY: all help headers compile submodules userspace bcc zlibc coreutils boot fs run clean check-tools check-fs-tools
 
 all: headers compile userspace boot fs
 
@@ -56,7 +61,10 @@ headers:
 
 compile: $(COMPILE_OBJECTS) $(KERNEL_ELF) $(MM_ELF) $(INIT_ELF) $(INPUT_ELF) $(INITRD)
 
-userspace: bcc zlibc coreutils
+submodules:
+	git submodule update --init --recursive
+
+userspace: submodules bcc zlibc $(COREUTILS_LIB)
 
 bcc:
 	$(MAKE) -C usr/usr/BCC
@@ -64,8 +72,14 @@ bcc:
 zlibc:
 	$(MAKE) -C usr/usr/zlibc
 
-coreutils:
-	$(MAKE) -C usr/usr/coreutils
+coreutils: $(COREUTILS_LIB)
+
+$(COREUTILS_LIB): $(COREUTILS_OBJECTS) | $(COREUTILS_BUILD)
+	ar rcs $@ $^
+
+$(COREUTILS_BUILD)/src/%.o: $(COREUTILS_DIR)/src/%.c
+	mkdir -p $(dir $@)
+	gcc -m32 -ffreestanding -fno-pie -fno-stack-protector -fno-asynchronous-unwind-tables -I$(COREUTILS_DIR)/include -I$(COREUTILS_DIR)/lib -Iusr/usr/zlibc/sysroot/include -c $< -o $@
 
 fs: check-fs-tools userspace compile $(FS_IMAGE)
 
@@ -110,8 +124,8 @@ $(KERNEL_BIN): $(KERNEL_ELF) | $(KERNEL_DIR)
 	objcopy -O binary $(KERNEL_ELF) $@
 	@test "$$(wc -c < $@)" -le $$((512 * $(KERNEL_SECTORS))) || { printf '%s\n' 'error: kernel exceeds its reserved disk space' >&2; exit 1; }
 
-$(KERNEL_ELF): $(OBJECT_DIR)/kernel/main.o $(OBJECT_DIR)/mm/heap.o $(OBJECT_DIR)/mm/blocks.o kernel/linker.ld | $(KERNEL_DIR)
-	ld -m elf_i386 -T kernel/linker.ld -o $@ $(OBJECT_DIR)/kernel/main.o $(OBJECT_DIR)/mm/heap.o $(OBJECT_DIR)/mm/blocks.o
+$(KERNEL_ELF): $(OBJECT_DIR)/kernel/main.o $(OBJECT_DIR)/kernel/vfs.o $(OBJECT_DIR)/drivers/loader.o $(OBJECT_DIR)/mm/heap.o $(OBJECT_DIR)/mm/blocks.o kernel/linker.ld | $(KERNEL_DIR)
+	ld -m elf_i386 -T kernel/linker.ld -o $@ $(OBJECT_DIR)/kernel/main.o $(OBJECT_DIR)/kernel/vfs.o $(OBJECT_DIR)/drivers/loader.o $(OBJECT_DIR)/mm/heap.o $(OBJECT_DIR)/mm/blocks.o
 
 $(OBJECT_DIR)/init/initlib.o: init/initlib.c $(INITLIB_HEADER)
 	mkdir -p $(dir $@)
@@ -121,7 +135,7 @@ $(OBJECT_DIR)/%.o: %.c
 	mkdir -p $(dir $@)
 	gcc -m32 -ffreestanding -fno-pie -fno-stack-protector -fno-asynchronous-unwind-tables -Iinclude -Ikernel/include -Iinit/include -c $< -o $@
 
-$(INITLIB_HEADER): init/include/init\ lib.h | $(BUILD_DIR)/include
+$(INITLIB_HEADER): init/include/initlib.h | $(BUILD_DIR)/include
 	cp "$<" "$@"
 
 $(BUILD_DIR)/include:
@@ -145,6 +159,9 @@ $(KERNEL_DIR):
 $(ARTIFACT_DIR):
 	mkdir -p $@
 
+$(COREUTILS_BUILD):
+	mkdir -p $@
+
 $(BOOT_DIR):
 	mkdir -p $@
 
@@ -158,5 +175,5 @@ check-fs-tools:
 clean:
 	$(MAKE) -C usr/usr/BCC clean
 	$(MAKE) -C usr/usr/zlibc clean
-	$(MAKE) -C usr/usr/coreutils clean
+	rm -rf $(COREUTILS_BUILD)
 	rm -rf $(BUILD_DIR)

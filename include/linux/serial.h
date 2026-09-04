@@ -18,6 +18,15 @@
 #ifndef _LINUX_SERIAL_H
 #define _LINUX_SERIAL_H
 
+struct termios {
+        unsigned int c_iflag;
+        unsigned int c_oflag;
+        unsigned int c_cflag;
+        unsigned int c_lflag;
+        unsigned char c_line;
+        unsigned char c_cc[19];
+};
+
 struct async_struct {
         int                        baud_base;
         int                        port;

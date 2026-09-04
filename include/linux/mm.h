@@ -161,6 +161,8 @@ extern void si_swapinfo(struct sysinfo * val);
 extern void rw_swap_page(int rw, unsigned long nr, char * buf);
 
 /* mmap.c */
+struct file;
+
 extern int do_mmap(struct file * file, unsigned long addr, unsigned long len,
         unsigned long prot, unsigned long flags, unsigned long off);
 typedef int (*map_mergep_fnp)(const struct vm_area_struct *,

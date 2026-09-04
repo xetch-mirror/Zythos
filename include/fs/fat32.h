@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 #include "types.h"
-#include "media.h"
+#include "media/media.h"
 
 /* Упрощённая структура загрузочного сектора (BPB) FAT32 */
 typedef struct {

@@ -1,5 +1,5 @@
-#ifndef _ELF_H
-#define _ELF_H
+#ifndef ZYTHOS_DRIVERS_ELF_H
+#define ZYTHOS_DRIVERS_ELF_H
 
 #include <stdint.h>
 
@@ -95,4 +95,12 @@ typedef struct {
     Elf32_Word sh_entsize;
 } Elf32_Shdr;
 
-#endif /* _ELF_H */
+typedef struct {
+    Elf32_Addr entry;
+    Elf32_Addr load_min;
+    Elf32_Addr load_max;
+} elf_load_result_t;
+
+int elf_load(const void *buf, uint32_t buf_size, elf_load_result_t *out);
+
+#endif /* ZYTHOS_DRIVERS_ELF_H */
