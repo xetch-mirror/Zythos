@@ -7,36 +7,3 @@
 [submodule "usr/usr/coreutils"]
 	path = usr/usr/coreutils
 	url = https://github.com/xetch-mirror/coreutils
-[submodule "ZCC"]
-	path = ZCC
-	url = https://github.com/xetch-mirror/ZCC.git
-[submodule "sed"]
-	path = sed
-	url = https://github.com/xetch-mirror/sed.git
-[submodule "version"]
-	path = version
-	url = https://github.com/xetch-mirror/version.git
-[submodule "zim"]
-	path = zim
-	url = https://github.com/xetch-mirror/zim.git
-[submodule "Zsub"]
-	path = Zsub
-	url = https://github.com/xetch-mirror/Zsub.git
-[submodule "lua"]
-	path = lua
-	url = https://github.com/xetch-mirror/lua.git
-[submodule "Z-SDL"]
-	path = Z-SDL
-	url = https://github.com/xetch-mirror/Z-SDL.git
-[submodule "Zlispe"]
-	path = Zlispe
-	url = https://github.com/xetch-mirror/Zlispe.git
-[submodule "iniparser"]
-	path = iniparser
-	url = https://github.com/xetch-mirror/iniparser.git
-[submodule "Zemulate"]
-	path = Zemulate
-	url = https://github.com/xetch-mirror/Zemulate.git
-[submodule "JAVA2ME4ZYTHOS"]
-	path = JAVA2ME4ZYTHOS
-	url = https://github.com/xetch-mirror/JAVA2ME4ZYTHOS.git
