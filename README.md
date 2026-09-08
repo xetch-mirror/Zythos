@@ -31,7 +31,7 @@ powerpc / powerpc64 support is planned as a future architecture target.
   `int 0x80` syscall dispatch, ELF32 loader
 - **BCC** — a minimal, purpose-built C compiler/interpreter (inspired by `c4`)
 - **Own toolchain** — an in-progress `binutils` suite: a freestanding
-  assembler with a custom object format, and a linker based on `mold`
+  assembler with a custom object format, and a linker based on `tiny-link`
 - **zlibc** — a custom C library with multi-arch raw syscall wrappers
 - **Userland** — a non-Unix shell (`zsh`), a minimal `nolibc`-based shell,
   and coreutils (including `ls`, built directly against FAT32 structures)
@@ -41,19 +41,23 @@ powerpc / powerpc64 support is planned as a future architecture target.
 - **Lua** - `standard lua` without some tools.
 
 > you probably need the zlibc library to run userland programs.
+
 ## Repository Layout
 
-```
-arch/      # architecture-specific code (boot.asm, etc.)
-base/      # base subsystem tree
-drivers/   # device drivers
-fs/        # filesystem code (FAT32; ext2 under consideration)
-include/   # shared headers (kernel + imported Linux-style headers)
-init/      # kernel init sequence
-input/     # input handling (keyboard, etc.)
-kernel/    # kernel core (main.c, mm, syscalls, IDT)
-```
-> THE LAYOUT IS OUTDATED, CHECK THE REPO.
+    arch/      # architecture-specific code (boot.asm, etc.)
+    base/      # base subsystem tree
+    core/      # core subsystem
+    drivers/   # device drivers
+    fs/        # filesystem code (FAT32; ext2 under consideration)
+    include/   # shared headers (kernel + imported Linux-style headers)
+    init/      # kernel init sequence
+    input/     # input handling (keyboard, etc.)
+    kernel/    # kernel core (main.c, syscalls, IDT)
+    mm/        # memory management
+    net/       # networking
+    scripts/   # build/dev scripts
+    userland/  # userland programs
+    usr/       # usr tree
 
 ## Building
 
@@ -61,16 +65,12 @@ kernel/    # kernel core (main.c, mm, syscalls, IDT)
 > instructions and toolchain requirements are being finalized as the custom
 > `binutils` suite matures.
 
-```sh
-make run
-```
+    make run
 
 This produces a bootable disk image that can be run in an emulator such as
 QEMU:
 
-```sh
-qemu-system-i386 -drive format=raw,file=zythos.img
-```
+    qemu-system-i386 -drive format=raw,file=zythos.img
 
 ## Status
 
@@ -81,6 +81,19 @@ still evolving.
 
 ## Credits
 
+- **moshego189** — `tiny-link`, the basis for Zythos's linker
+- **seancfoley** — Java-side reference work
+- **tayoky** — `tvi` headers and Zemulate
+- **ndevilla** — `iniparser`
+- **wtarreau** — libc reference. Huge thanks
+- **fsantanna** — SDL
+- **Robert-van-Engelen** — Lisp reference
+- **The Lua Team** — Lua
+- **rswier** — `c4`
+- **Rui314** — other cc (`chibicc`)
+- **pardeep-singh** — SQLite
+- **wkozek** — zlib tools
+- **Ferki-git-crestor** — ttar
 - `keyboard.h`, `keycodes.h`, and `keymap.h` originally from
   [BoredOS](https://github.com/lluciocc) by Lluciocc, used under GPL.
 - Bootloader design informed by the NanoByte OS tutorial series.
